@@ -9,25 +9,32 @@ data class BankilyTransaction(
 
 object BankilyParser {
 
-    // Bankily transaction IDs are 10+ consecutive digits
-    private val TXN_ID_RE = Regex("""\b(\d{10,})\b""")
+    // Standalone 15+ digit sequence — Bankily transaction IDs
+    private val TXN_ID_RE = Regex("""\b(\d{15,})\b""")
 
-    // Amounts in MRU / UM / أوقية
+    // "Montant : 10 MRU" or "Montant: 10 MRU" (space before colon optional)
     private val AMOUNT_RE = Regex(
-        """(\d[\d\s,.']*\d|\d+)\s*(?:MRU|UM|أوقية|ouguiya)""",
+        """montant\s*:\s*([\d.,]+(?:\s[\d.,]+)*)\s*MRU""",
         RegexOption.IGNORE_CASE
     )
 
-    // Mauritanian mobile numbers: starts with 2, 3, or 4, 8 digits total, optional +222/00222 prefix
-    private val PHONE_RE = Regex("""\b(?:\+?222|00222)?([234]\d{7})\b""")
+    // "Expediteur : HASSAN JAIFI,41911809" — name may wrap across lines
+    private val EXPEDITEUR_RE = Regex(
+        """expediteur\s*:\s*([\s\S]+?),\s*(\d+)""",
+        RegexOption.IGNORE_CASE
+    )
 
     fun parse(title: String, body: String): BankilyTransaction? {
-        val text = "$title $body"
+        val text = "$title\n$body"
 
         val transactionId = TXN_ID_RE.find(text)?.groupValues?.get(1) ?: return null
+
         val amount = AMOUNT_RE.find(text)?.groupValues?.get(1)?.trim() ?: ""
-        val phone = PHONE_RE.find(text)?.groupValues?.get(1) ?: ""
-        val senderName = extractSenderName(text, phone)
+
+        val expMatch = EXPEDITEUR_RE.find(text)
+        val senderName = expMatch?.groupValues?.get(1)
+            ?.replace(Regex("""\s+"""), " ")?.trim() ?: ""
+        val phone = expMatch?.groupValues?.get(2)?.trim() ?: ""
 
         return BankilyTransaction(
             transactionId = transactionId,
@@ -35,22 +42,5 @@ object BankilyParser {
             amount = amount,
             phone = phone
         )
-    }
-
-    private fun extractSenderName(text: String, phone: String): String {
-        // Arabic pattern: مبلغ ... من <name> <phone|txn>
-        Regex("""من\s+([^\d\n]{2,40?}?)(?=\s*\d|\s*${'$'})""").find(text)
-            ?.groupValues?.get(1)?.trim()
-            ?.takeIf { it.length >= 2 }
-            ?.let { return it }
-
-        // French/English pattern: de <name> / from <name>
-        Regex("""(?:de|from)\s+([A-Za-z؀-ۿ ]{2,40?})(?=\s*[\d\-]|\s*${'$'})""", RegexOption.IGNORE_CASE)
-            .find(text)
-            ?.groupValues?.get(1)?.trim()
-            ?.takeIf { it.isNotBlank() && it != phone }
-            ?.let { return it }
-
-        return ""
     }
 }
