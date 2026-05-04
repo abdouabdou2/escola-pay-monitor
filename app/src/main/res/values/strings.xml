@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">E-School Pay Monitor</string>
+    <string name="enable_permission">تفعيل صلاحية الإشعارات</string>
+    <string name="status_active">جارٍ المراقبة 🟢\nالخدمة تعمل في الخلفية</string>
+    <string name="status_inactive">غير مفعّل 🔴\nيرجى تفعيل صلاحية قراءة الإشعارات</string>
+</resources>
