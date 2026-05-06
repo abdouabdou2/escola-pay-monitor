@@ -1,4 +1,4 @@
-package online.wpeschool.paymonitor
+package com.eschool24.paymonitor
 
 import android.content.ComponentName
 import android.content.Intent

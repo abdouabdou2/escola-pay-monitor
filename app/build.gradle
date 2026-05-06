@@ -4,21 +4,30 @@ plugins {
 }
 
 android {
-    namespace 'online.wpeschool.paymonitor'
+    namespace 'com.eschool24.paymonitor'
     compileSdk 34
 
     defaultConfig {
-        applicationId "online.wpeschool.paymonitor"
+        applicationId "com.eschool24.paymonitor"
         minSdk 26
         targetSdk 34
         versionCode 1
         versionName "1.0"
     }
 
+    signingConfigs {
+        release {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+    }
+
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources true
+            signingConfig signingConfigs.release
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {

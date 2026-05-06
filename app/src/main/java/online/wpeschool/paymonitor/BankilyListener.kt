@@ -1,4 +1,4 @@
-package online.wpeschool.paymonitor
+package com.eschool24.paymonitor
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -12,7 +12,7 @@ class BankilyListener : NotificationListenerService() {
 
     companion object {
         const val BANKILY_PACKAGE = "mr.bpm.digitalbanking.consumer"
-        const val ACTION_NEW_TRANSACTION = "online.wpeschool.paymonitor.NEW_TRANSACTION"
+        const val ACTION_NEW_TRANSACTION = "com.eschool24.paymonitor.NEW_TRANSACTION"
         private const val TAG = "BankilyListener"
         private const val DEBUG_CHANNEL_ID = "bankily_debug"
         private const val DEBUG_NOTIF_ID = 9_001

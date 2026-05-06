@@ -41,4 +41,23 @@
         android:textColor="#FFFFFF"
         android:paddingHorizontal="32dp" />
 
+    <Button
+        android:id="@+id/btnTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Send Test to Server"
+        android:backgroundTint="#388E3C"
+        android:textColor="#FFFFFF"
+        android:paddingHorizontal="32dp" />
+
+    <TextView
+        android:id="@+id/tvTestResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textSize="13sp"
+        android:textColor="#888888"
+        android:gravity="center" />
+
 </LinearLayout>

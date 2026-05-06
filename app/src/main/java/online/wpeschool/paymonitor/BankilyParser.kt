@@ -1,4 +1,4 @@
-package online.wpeschool.paymonitor
+package com.eschool24.paymonitor
 
 data class BankilyTransaction(
     val transactionId: String,

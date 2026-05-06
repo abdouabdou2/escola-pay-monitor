@@ -1,4 +1,4 @@
-package online.wpeschool.paymonitor
+package com.eschool24.paymonitor
 
 import android.content.BroadcastReceiver
 import android.content.Context
