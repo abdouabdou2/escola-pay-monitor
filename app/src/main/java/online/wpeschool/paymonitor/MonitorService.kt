@@ -8,6 +8,7 @@ import android.app.Service
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.IBinder
+import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import kotlinx.coroutines.CoroutineScope
@@ -37,6 +38,7 @@ class MonitorService : Service() {
     }
 
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private lateinit var wakeLock: PowerManager.WakeLock
 
     override fun onCreate() {
         super.onCreate()
@@ -47,6 +49,9 @@ class MonitorService : Service() {
             buildNotification(),
             ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
         )
+        wakeLock = (getSystemService(POWER_SERVICE) as PowerManager)
+            .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "escola:monitor")
+            .also { it.acquire() }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -62,7 +67,13 @@ class MonitorService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        sendBroadcast(Intent(this, ServiceRestarter::class.java))
+        super.onTaskRemoved(rootIntent)
+    }
+
     override fun onDestroy() {
+        if (::wakeLock.isInitialized && wakeLock.isHeld) wakeLock.release()
         scope.cancel()
         super.onDestroy()
     }
